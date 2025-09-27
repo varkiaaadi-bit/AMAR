@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitTracker Pro - Complete Fitness Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        .workout-card {
+            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #2a2d3a, #212330);
+            border: 1px solid #3d4152;
+        }
+        .workout-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border-color: #6366f1;
+        }
+        .progress-bar {
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        .add-workout-btn {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%);
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+        }
+        .add-workout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4);
+        }
+        .chart-container {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border: 1px solid #475569;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        .form-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .form-input:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .form-input option {
+            background: #1f2937;
+            color: white;
+        }
+        .calculator-card {
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border: 1px solid #475569;
+            animation: slideInUp 0.6s ease-out;
+        }
+        .motivation-popup {
+            animation: bounceIn 0.8s ease-out;
+        }
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        .slide-in-left {
+            animation: slideInLeft 0.5s ease-out;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+        .achievement-badge {
+            animation: achievementPop 0.6s ease-out;
+        }
+        .calendar-day {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .calendar-day:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+        .calendar-day.has-workout {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .calendar-day.planned {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+        .calendar-day.today {
+            border: 2px solid #6366f1;
+        }
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3) translateY(-50px);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        @keyframes pulseGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
+            }
+        }
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes achievementPop {
+            0% {
+                transform: scale(0.5) rotate(-10deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        .result-highlight {
+            background: linear-gradient(135deg, #10b981, #059669);
+            animation: resultPop 0.5s ease-out;
+        }
+        @keyframes resultPop {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 min-h-screen font-sans text-white">
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <div class="text-center mb-8 fade-in">
+            <h1 class="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2 floating-icon">⚡️AMAR CADENCE ⚡️</h1>
+            <p class="text-gray-300 text-lg">Complete Fitness Management System</p>
+            
+            <!-- Motivational Quote -->
+            <div class="mt-6 glass-card rounded-lg p-4 max-w-2xl mx-auto">
+                <div class="flex items-center justify-center space-x-3">
+                    <span class="text-2xl floating-icon">💭</span>
+                    <div class="text-center">
+                        <p class="text-white font-medium italic" id="motivationalQuote">"The only bad workout is the one that didn't happen."</p>
+                        <p class="text-gray-400 text-sm mt-1" id="quoteAuthor">- Unknown</p>
+                    </div>
+                    <button onclick="changeQuote()" class="text-purple-400 hover:text-purple-300 text-sm font-medium">
+                        🔄
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center mb-8">
+            <div class="glass-card rounded-lg p-1 flex flex-wrap justify-center space-x-1">
+                <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-button active px-4 py-2 rounded-md text-sm font-medium transition-all">
+                    📊 Dashboard
+                </button>
+                <button onclick="showTab('analytics')" id="tab-analytics" class="tab-button px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white transition-all">
+                    📈 Analytics
+                </button>
+                <button onclick="showTab('planner')" id="tab-planner" class="tab-button px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white transition-all">
+                    📅 Planner
+                </button>
+                <button onclick="showTab('goals')" id="tab-goals" class="tab-button px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white transition-all">
+                    🎯 Goals
+                </button>
+                <button onclick="showTab('data')" id="tab-data" class="tab-button px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white transition-all">
+                    💾 Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Motivation Popup -->
+        <div id="motivationPopup" class="fixed top-4 right-4 z-50 hidden">
+            <div class="motivation-popup bg-gradient-to-r from-green-400 to-blue-500 text-white px-6 py-3 rounded-lg shadow-lg max-w-sm">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl" id="motivationIcon">🎉</span>
+                    <p class="font-semibold" id="motivationText">Great job!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievement Popup -->
+        <div id="achievementPopup" class="fixed top-20 right-4 z-50 hidden">
+            <div class="achievement-badge bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-lg shadow-lg max-w-sm">
+                <div class="flex items-center space-x-2">
+                    <span class="text-2xl">🏆</span>
+                    <div>
+                        <p class="font-bold text-sm">Achievement Unlocked!</p>
+                        <p class="text-xs" id="achievementText">First Workout Complete!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard-content" class="tab-content">
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card text-white p-6 rounded-xl shadow-lg slide-in-left" style="animation-delay: 0.1s">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-90">Total Workouts</p>
+                            <p class="text-2xl font-bold" id="totalWorkouts">0</p>
+                        </div>
+                        <div class="text-3xl floating-icon">🏋️</div>
+                    </div>
+                </div>
+                <div class="stat-card text-white p-6 rounded-xl shadow-lg slide-in-left" style="animation-delay: 0.2s">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-90">This Week</p>
+                            <p class="text-2xl font-bold" id="weeklyWorkouts">0</p>
+                        </div>
+                        <div class="text-3xl floating-icon" style="animation-delay: 0.5s">📅</div>
+                    </div>
+                </div>
+                <div class="stat-card text-white p-6 rounded-xl shadow-lg slide-in-left" style="animation-delay: 0.3s">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-90">Total Minutes</p>
+                            <p class="text-2xl font-bold" id="totalMinutes">0</p>
+                        </div>
+                        <div class="text-3xl floating-icon" style="animation-delay: 1s">⏱️</div>
+                    </div>
+                </div>
+                <div class="stat-card text-white p-6 rounded-xl shadow-lg slide-in-left pulse-glow" style="animation-delay: 0.4s">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm opacity-90">Streak</p>
+                            <p class="text-2xl font-bold" id="currentStreak">0</p>
+                        </div>
+                        <div class="text-3xl floating-icon" style="animation-delay: 1.5s">🔥</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Add Workout Form -->
+                <div class="lg:col-span-1">
+                    <div class="glass-card rounded-xl shadow-2xl p-6 mb-6 neon-glow">
+                        <h2 class="text-xl font-bold text-white mb-4">📝 Log New Workout</h2>
+                        <form id="workoutForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Workout Type</label>
+                                <select id="workoutType" class="form-input w-full p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    <option value="">Select workout type</option>
+                                    <option value="Cardio">🏃 Cardio</option>
+                                    <option value="Strength">💪 Strength Training</option>
+                                    <option value="Yoga">🧘 Yoga</option>
+                                    <option value="Swimming">🏊 Swimming</option>
+                                    <option value="Cycling">🚴 Cycling</option>
+                                    <option value="Other">🏃 Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Duration (minutes)</label>
+                                <input type="number" id="duration" min="1" max="300" class="form-input w-full p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="30">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Intensity</label>
+                                <select id="intensity" class="form-input w-full p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    <option value="">Select intensity</option>
+                                    <option value="Low">😌 Low</option>
+                                    <option value="Medium">😤 Medium</option>
+                                    <option value="High">🔥 High</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Calories Burned (optional)</label>
+                                <input type="number" id="calories" min="0" class="form-input w-full p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="250">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Notes (optional)</label>
+                                <textarea id="notes" rows="3" class="form-input w-full p-3 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" placeholder="How did it feel? Any achievements?"></textarea>
+                            </div>
+                            <button type="submit" class="add-workout-btn w-full text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                Add Workout
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Weekly Goal Progress -->
+                    <div class="glass-card rounded-xl shadow-2xl p-6 mb-6">
+                        <h3 class="text-lg font-bold text-white mb-4">🎯 Weekly Goal</h3>
+                        <div class="mb-2">
+                            <div class="flex justify-between text-sm text-gray-300 mb-1">
+                                <span>Workouts this week</span>
+                                <span id="goalProgress">0/5</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="progress-bar bg-gradient-to-r from-cyan-400 to-purple-500 h-3 rounded-full" id="progressBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2">Keep going! You're doing great! 🌟</p>
+                    </div>
+
+                    <!-- BMI Calculator -->
+                    <div class="calculator-card rounded-xl shadow-2xl p-6 mb-6">
+                        <h3 class="text-lg font-bold text-white mb-4">📏 BMI Calculator</h3>
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="number" id="height" placeholder="Height (cm)" class="form-input p-2 rounded text-sm">
+                                <input type="number" id="weight" placeholder="Weight (kg)" class="form-input p-2 rounded text-sm">
+                            </div>
+                            <button onclick="calculateBMI()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2 rounded font-semibold hover:opacity-90 transition-opacity">
+                                Calculate BMI
+                            </button>
+                            <div id="bmiResult" class="text-center text-sm text-gray-300 hidden"></div>
+                        </div>
+                    </div>
+
+                    <!-- BMR Calculator -->
+                    <div class="calculator-card rounded-xl shadow-2xl p-6">
+                        <h3 class="text-lg font-bold text-white mb-4">🔥 BMR Calculator</h3>
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="number" id="bmrHeight" placeholder="Height (cm)" class="form-input p-2 rounded text-sm">
+                                <input type="number" id="bmrWeight" placeholder="Weight (kg)" class="form-input p-2 rounded text-sm">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="number" id="age" placeholder="Age" class="form-input p-2 rounded text-sm">
+                                <select id="gender" class="form-input p-2 rounded text-sm">
+                                    <option value="">Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <button onclick="calculateBMR()" class="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-2 rounded font-semibold hover:opacity-90 transition-opacity">
+                                Calculate BMR
+                            </button>
+                            <div id="bmrResult" class="text-center text-sm text-gray-300 hidden"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workout History -->
+                <div class="lg:col-span-2">
+                    <div class="glass-card rounded-xl shadow-2xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold text-white">📊 Recent Workouts</h2>
+                            <button id="clearHistory" class="text-red-400 hover:text-red-300 text-sm font-medium">Clear All</button>
+                        </div>
+                        
+                        <div id="workoutHistory" class="space-y-4">
+                            <div class="text-center py-12 text-gray-400">
+                                <div class="text-6xl mb-4">🏃‍♀️</div>
+                                <p class="text-lg">No workouts logged yet!</p>
+                                <p class="text-sm">Start your fitness journey by adding your first workout.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weekly Chart -->
+                    <div class="chart-container text-white rounded-xl shadow-lg p-6 mt-6">
+                        <h3 class="text-lg font-bold mb-4">📈 This Week's Activity</h3>
+                        <div class="grid grid-cols-7 gap-2">
+                            <div class="text-center">
+                                <div class="text-xs mb-2">Mon</div>
+                                <div class="bg-white bg-opacity-20 rounded h-16 flex items-end justify-center">
+                                    <div id="mon-bar" class="bg-white rounded-t w-full transition-all duration-500" style="height: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs mb-2">Tue</div>
+                                <div class="bg-white bg-opacity-20 rounded h-16 flex items-end justify-center">
+                                    <div id="tue-bar" class="bg-white rounded-t w-full transition-all duration-500" style="height: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs mb-2">Wed</div>
+                                <div class="bg-white bg-opacity-20 rounded h-16 flex items-end justify-center">
+                                    <div id="wed-bar" class="bg-white rounded-t w-full transition-all duration-500" style="height: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs mb-2">Thu</div>
+                                <div class="bg-white bg-opacity-20 rounded h-16 flex items-end justify-center">
+                                    <div id="thu-bar" class="bg-white rounded-t w-full transition-all duration-500" style="height: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs mb-2">Fri</div>
+                                <div class="bg-white bg-opacity-20 rounded h-16 flex items-end justify-center">
+                                    <div id="fri-bar" class="bg-white rounded-t w-full transition-all duration-500" style="height: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs mb-2">Sat</div>
+                                <div class="bg-white bg-opacity-20 rounded h-16 flex items-end justify-center">
+                                    <div id="sat-bar" class="bg-white rounded-t w-full transition-all duration-500" style="height: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs mb-2">Sun</div>
+                                <div class="bg-white bg-opacity-20 rounded h-16 flex items-end justify-center">
+                                    <div id="sun-bar" class="bg-white rounded-t w-full transition-all duration-500" style="height: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics-content" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Monthly Progress Chart -->
+                <div class="glass-card rounded-xl shadow-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">📊 Monthly Progress</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Total Workouts</span>
+                            <span class="text-white font-bold" id="monthlyWorkouts">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Total Minutes</span>
+                            <span class="text-white font-bold" id="monthlyMinutes">0</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Avg. Duration</span>
+                            <span class="text-white font-bold" id="avgDuration">0 min</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">Calories Burned</span>
+                            <span class="text-white font-bold" id="totalCalories">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workout Type Distribution -->
+                <div class="glass-card rounded-xl shadow-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">🏃 Workout Types</h3>
+                    <div id="workoutTypeChart" class="space-y-3">
+                        <!-- Dynamic content will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Performance Trends -->
+                <div class="glass-card rounded-xl shadow-2xl p-6 lg:col-span-2">
+                    <h3 class="text-xl font-bold text-white mb-4">📈 Performance Trends</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl mb-2" id="trendIcon1">📊</div>
+                            <div class="text-2xl font-bold text-green-400" id="trendValue1">+15%</div>
+                            <div class="text-sm text-gray-300" id="trendLabel1">Weekly Improvement</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-2" id="trendIcon2">⏱️</div>
+                            <div class="text-2xl font-bold text-blue-400" id="trendValue2">45 min</div>
+                            <div class="text-sm text-gray-300" id="trendLabel2">Avg Session</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-2" id="trendIcon3">🔥</div>
+                            <div class="text-2xl font-bold text-orange-400" id="trendValue3">7 days</div>
+                            <div class="text-sm text-gray-300" id="trendLabel3">Best Streak</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Planner Tab -->
+        <div id="planner-content" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Calendar -->
+                <div class="lg:col-span-2">
+                    <div class="glass-card rounded-xl shadow-2xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-white">📅 Workout Calendar</h3><div class="flex space-x-2">
+                                <button onclick="changeMonth(-1)" class="text-gray-300 hover:text-white">←</button>
+                                <span class="text-white font-medium" id="currentMonth">December 2024</span>
+                                <button onclick="changeMonth(1)" class="text-gray-300 hover:text-white">→</button>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2 mb-4">
+                            <div class="text-center text-gray-400 text-sm py-2">Sun</div>
+                            <div class="text-center text-gray-400 text-sm py-2">Mon</div>
+                            <div class="text-center text-gray-400 text-sm py-2">Tue</div>
+                            <div class="text-center text-gray-400 text-sm py-2">Wed</div>
+                            <div class="text-center text-gray-400 text-sm py-2">Thu</div>
+                            <div class="text-center text-gray-400 text-sm py-2">Fri</div>
+                            <div class="text-center text-gray-400 text-sm py-2">Sat</div>
+                        </div>
+                        <div id="calendarGrid" class="grid grid-cols-7 gap-2">
+                            <!-- Calendar days will be generated here -->
+                        </div>
+                        <div class="mt-4 flex flex-wrap gap-4 text-xs">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-green-500 rounded"></div>
+                                <span class="text-gray-300">Completed</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-orange-500 rounded"></div>
+                                <span class="text-gray-300">Planned</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 border-2 border-purple-500 rounded"></div>
+                                <span class="text-gray-300">Today</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan Workout -->
+                <div class="lg:col-span-1">
+                    <div class="glass-card rounded-xl shadow-2xl p-6 mb-6">
+                        <h3 class="text-xl font-bold text-white mb-4">📝 Plan Workout</h3>
+                        <form id="planWorkoutForm" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Date</label>
+                                <input type="date" id="planDate" class="form-input w-full p-3 rounded-lg">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Workout Type</label>
+                                <select id="planWorkoutType" class="form-input w-full p-3 rounded-lg">
+                                    <option value="">Select workout type</option>
+                                    <option value="Cardio">🏃 Cardio</option>
+                                    <option value="Strength">💪 Strength Training</option>
+                                    <option value="Yoga">🧘 Yoga</option>
+                                    <option value="Swimming">🏊 Swimming</option>
+                                    <option value="Cycling">🚴 Cycling</option>
+                                    <option value="Other">🏃 Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Planned Duration</label>
+                                <input type="number" id="planDuration" min="1" max="300" class="form-input w-full p-3 rounded-lg" placeholder="30">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Notes</label>
+                                <textarea id="planNotes" rows="3" class="form-input w-full p-3 rounded-lg" placeholder="Workout plan details..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                Schedule Workout
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Upcoming Workouts -->
+                    <div class="glass-card rounded-xl shadow-2xl p-6">
+                        <h3 class="text-lg font-bold text-white mb-4">⏰ Upcoming Workouts</h3>
+                        <div id="upcomingWorkouts" class="space-y-3">
+                            <div class="text-center py-8 text-gray-400">
+                                <div class="text-4xl mb-2">📅</div>
+                                <p class="text-sm">No planned workouts</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Goals Tab -->
+        <div id="goals-content" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Set Goals -->
+                <div class="glass-card rounded-xl shadow-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">🎯 Set Your Goals</h3>
+                    <form id="goalsForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Weekly Workout Goal</label>
+                            <input type="number" id="weeklyGoal" min="1" max="14" class="form-input w-full p-3 rounded-lg" placeholder="5">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Monthly Minutes Goal</label>
+                            <input type="number" id="monthlyMinutesGoal" min="60" class="form-input w-full p-3 rounded-lg" placeholder="1200">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Weight Goal (kg)</label>
+                            <input type="number" id="weightGoal" step="0.1" class="form-input w-full p-3 rounded-lg" placeholder="70.0">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Target Streak (days)</label>
+                            <input type="number" id="streakGoal" min="1" class="form-input w-full p-3 rounded-lg" placeholder="30">
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            Save Goals
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Goal Progress -->
+                <div class="glass-card rounded-xl shadow-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">📊 Goal Progress</h3>
+                    <div class="space-y-6" id="goalProgress">
+                        <!-- Goal progress will be displayed here -->
+                    </div>
+                </div>
+
+                <!-- Achievements -->
+                <div class="glass-card rounded-xl shadow-2xl p-6 lg:col-span-2">
+                    <h3 class="text-xl font-bold text-white mb-4">🏆 Achievements</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="achievementsList">
+                        <!-- Achievements will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Tab -->
+        <div id="data-content" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Export Data -->
+                <div class="glass-card rounded-xl shadow-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">📤 Export Data</h3>
+                    <div class="space-y-4">
+                        <p class="text-gray-300 text-sm">Download your workout data for backup or analysis</p>
+                        <div class="space-y-3">
+                            <button onclick="exportData('json')" class="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                📄 Export as JSON
+                            </button>
+                            <button onclick="exportData('csv')" class="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                📊 Export as CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Import Data -->
+                <div class="glass-card rounded-xl shadow-2xl p-6">
+                    <h3 class="text-xl font-bold text-white mb-4">📥 Import Data</h3>
+                    <div class="space-y-4">
+                        <p class="text-gray-300 text-sm">Import your workout data from a backup file</p>
+                        <div class="space-y-3">
+                            <input type="file" id="importFile" accept=".json,.csv" class="form-input w-full p-3 rounded-lg">
+                            <button onclick="importData()" class="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                📥 Import Data
+                            </button>
+                        </div>
+                        <div class="text-xs text-gray-400">
+                            <p>⚠️ Importing will merge with existing data</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Statistics -->
+                <div class="glass-card rounded-xl shadow-2xl p-6 lg:col-span-2">
+                    <h3 class="text-xl font-bold text-white mb-4">📈 Data Overview</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl mb-2">💾</div>
+                            <div class="text-2xl font-bold text-blue-400" id="dataSize">0 KB</div>
+                            <div class="text-sm text-gray-300">Storage Used</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-2">📅</div>
+                            <div class="text-2xl font-bold text-green-400" id="firstWorkout">-</div>
+                            <div class="text-sm text-gray-300">First Workout</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-2">🏃</div>
+                            <div class="text-2xl font-bold text-purple-400" id="favoriteWorkout">-</div>
+                            <div class="text-sm text-gray-300">Favorite Type</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-2">⭐</div>
+                            <div class="text-2xl font-bold text-yellow-400" id="longestSession">0 min</div>
+                            <div class="text-sm text-gray-300">Longest Session</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class FitnessTrackerPro {
+            constructor() {
+                this.workouts = JSON.parse(localStorage.getItem('workouts')) || [];
+                this.plannedWorkouts = JSON.parse(localStorage.getItem('plannedWorkouts')) || [];
+                this.goals = JSON.parse(localStorage.getItem('goals')) || {
+                    weekly: 5,
+                    monthlyMinutes: 1200,
+                    weight: null,
+                    streak: 30
+                };
+                this.achievements = JSON.parse(localStorage.getItem('achievements')) || [];
+                this.currentTab = 'dashboard';
+                this.currentDate = new Date();
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.updateStats();
+                this.renderWorkouts();
+                this.updateChart();
+                this.renderCalendar();
+                this.updateGoalProgress();
+                this.updateAchievements();
+                this.updateDataOverview();
+            }
+
+            bindEvents() {
+                document.getElementById('workoutForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addWorkout();
+                });
+
+                document.getElementById('planWorkoutForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.planWorkout();
+                });
+
+                document.getElementById('goalsForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveGoals();
+                });
+
+                document.getElementById('clearHistory').addEventListener('click', () => {
+                    if (confirm('Are you sure you want to clear all workout history?')) {
+                        this.clearAllWorkouts();
+                    }
+                });
+            }
+
+            addWorkout() {
+                const type = document.getElementById('workoutType').value;
+                const duration = parseInt(document.getElementById('duration').value);
+                const intensity = document.getElementById('intensity').value;
+                const calories = parseInt(document.getElementById('calories').value) || 0;
+                const notes = document.getElementById('notes').value;
+
+                if (!type || !duration || !intensity) {
+                    alert('Please fill in all required fields!');
+                    return;
+                }
+
+                const workout = {
+                    id: Date.now(),
+                    type,
+                    duration,
+                    intensity,
+                    calories,
+                    notes,
+                    date: new Date().toISOString(),
+                    dayOfWeek: new Date().getDay()
+                };
+
+                this.workouts.unshift(workout);
+                this.saveWorkouts();
+                this.updateStats();
+                this.renderWorkouts();
+                this.updateChart();
+                this.renderCalendar();
+                this.checkAchievements();
+                this.updateDataOverview();
+                
+                // Reset form
+                document.getElementById('workoutForm').reset();
+                
+                // Show success message
+                this.showSuccessMessage();
+            }
+
+            planWorkout() {
+                const date = document.getElementById('planDate').value;
+                const type = document.getElementById('planWorkoutType').value;
+                const duration = parseInt(document.getElementById('planDuration').value);
+                const notes = document.getElementById('planNotes').value;
+
+                if (!date || !type || !duration) {
+                    alert('Please fill in all required fields!');
+                    return;
+                }
+
+                const plannedWorkout = {
+                    id: Date.now(),
+                    date,
+                    type,
+                    duration,
+                    notes,
+                    completed: false
+                };
+
+                this.plannedWorkouts.push(plannedWorkout);
+                this.savePlannedWorkouts();
+                this.renderCalendar();
+                this.renderUpcomingWorkouts();
+                
+                // Reset form
+                document.getElementById('planWorkoutForm').reset();
+                
+                alert('Workout scheduled successfully!');
+            }
+
+            saveGoals() {
+                this.goals = {
+                    weekly: parseInt(document.getElementById('weeklyGoal').value) || 5,
+                    monthlyMinutes: parseInt(document.getElementById('monthlyMinutesGoal').value) || 1200,
+                    weight: parseFloat(document.getElementById('weightGoal').value) || null,
+                    streak: parseInt(document.getElementById('streakGoal').value) || 30
+                };
+                
+                localStorage.setItem('goals', JSON.stringify(this.goals));
+                this.updateGoalProgress();
+                alert('Goals saved successfully!');
+            }
+
+            showSuccessMessage() {
+                const button = document.querySelector('.add-workout-btn');
+                const originalText = button.textContent;
+                button.textContent = '✅ Workout Added!';
+                button.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                
+                // Show motivation popup
+                this.showMotivation();
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 50%, #8b5cf6 100%)';
+                }, 2000);
+            }
+
+            showMotivation() {
+                const motivations = [
+                    { text: "Amazing work! Keep it up! 💪", icon: "🎉" },
+                    { text: "You're crushing your goals! 🔥", icon: "⚡" },
+                    { text: "Every workout counts! 🌟", icon: "✨" },
+                    { text: "You're getting stronger! 💪", icon: "🚀" },
+                    { text: "Consistency is key! 🗝️", icon: "🎯" },
+                    { text: "You're unstoppable! 🦾", icon: "💥" },
+                    { text: "Progress over perfection! 📈", icon: "🏆" }
+                ];
+                
+                const randomMotivation = motivations[Math.floor(Math.random() * motivations.length)];
+                const popup = document.getElementById('motivationPopup');
+                const text = document.getElementById('motivationText');
+                const icon = document.getElementById('motivationIcon');
+                
+                text.textContent = randomMotivation.text;
+                icon.textContent = randomMotivation.icon;
+                
+                popup.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    popup.classList.add('hidden');
+                }, 4000);
+            }
+
+            showAchievement(achievement) {
+                const popup = document.getElementById('achievementPopup');
+                const text = document.getElementById('achievementText');
+                
+                text.textContent = achievement.name;
+                popup.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    popup.classList.add('hidden');
+                }, 5000);
+            }
+
+            checkAchievements() {
+                const totalWorkouts = this.workouts.length;
+                const streak = this.calculateStreak();
+                const totalMinutes = this.workouts.reduce((sum, workout) => sum + workout.duration, 0);
+                
+                const possibleAchievements = [
+                    { id: 'first_workout', name: 'First Steps', condition: totalWorkouts >= 1, icon: '🎯' },
+                    { id: 'week_warrior', name: 'Week Warrior', condition: totalWorkouts >= 7, icon: '⚡' },
+                    { id: 'streak_starter', name: 'Streak Starter', condition: streak >= 3, icon: '🔥' },
+                    { id: 'streak_master', name: 'Streak Master', condition: streak >= 7, icon: '🏆' },
+                    { id: 'time_keeper', name: 'Time Keeper', condition: totalMinutes >= 300, icon: '⏰' },
+                    { id: 'marathon_runner', name: 'Marathon Runner', condition: totalMinutes >= 1000, icon: '🏃' },
+                    { id: 'consistency_king', name: 'Consistency King', condition: totalWorkouts >= 30, icon: '👑' }
+                ];
+
+                possibleAchievements.forEach(achievement => {
+                    if (achievement.condition && !this.achievements.find(a => a.id === achievement.id)) {
+                        this.achievements.push({
+                            ...achievement,
+                            unlockedAt: new Date().toISOString()
+                        });
+                        this.showAchievement(achievement);
+                    }
+                });
+
+                localStorage.setItem('achievements', JSON.stringify(this.achievements));
+                this.updateAchievements();
+            }
+
+            deleteWorkout(id) {
+                this.workouts = this.workouts.filter(workout => workout.id !== id);
+                this.saveWorkouts();
+                this.updateStats();
+                this.renderWorkouts();
+                this.updateChart();
+                this.renderCalendar();
+                this.updateDataOverview();
+            }
+
+            clearAllWorkouts() {
+                this.workouts = [];
+                this.saveWorkouts();
+                this.updateStats();
+                this.renderWorkouts();
+                this.updateChart();
+                this.renderCalendar();
+                this.updateDataOverview();
+            }
+
+            saveWorkouts() {
+                localStorage.setItem('workouts', JSON.stringify(this.workouts));
+            }
+
+            savePlannedWorkouts() {
+                localStorage.setItem('plannedWorkouts', JSON.stringify(this.plannedWorkouts));
+            }
+
+            updateStats() {
+                const totalWorkouts = this.workouts.length;
+                const totalMinutes = this.workouts.reduce((sum, workout) => sum + workout.duration, 0);
+                const weeklyWorkouts = this.getWeeklyWorkouts().length;
+                const streak = this.calculateStreak();
+
+                document.getElementById('totalWorkouts').textContent = totalWorkouts;
+                document.getElementById('totalMinutes').textContent = totalMinutes;
+                document.getElementById('weeklyWorkouts').textContent = weeklyWorkouts;
+                document.getElementById('currentStreak').textContent = streak;
+
+                // Update weekly goal progress
+                const progressPercent = Math.min((weeklyWorkouts / this.goals.weekly) * 100, 100);
+                document.getElementById('goalProgress').textContent = `${weeklyWorkouts}/${this.goals.weekly}`;
+                document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+                // Update analytics
+                this.updateAnalytics();
+            }
+
+            updateAnalytics() {
+                const monthlyWorkouts = this.getMonthlyWorkouts();
+                const totalMinutes = monthlyWorkouts.reduce((sum, workout) => sum + workout.duration, 0);
+                const avgDuration = monthlyWorkouts.length > 0 ? Math.round(totalMinutes / monthlyWorkouts.length) : 0;
+                const totalCalories = monthlyWorkouts.reduce((sum, workout) => sum + (workout.calories || 0), 0);
+
+                document.getElementById('monthlyWorkouts').textContent = monthlyWorkouts.length;
+                document.getElementById('monthlyMinutes').textContent = totalMinutes;
+                document.getElementById('avgDuration').textContent = `${avgDuration} min`;
+                document.getElementById('totalCalories').textContent = totalCalories;
+
+                // Update workout type chart
+                this.updateWorkoutTypeChart();
+            }
+
+            updateWorkoutTypeChart() {
+                const workoutTypes = {};
+                this.workouts.forEach(workout => {
+                    workoutTypes[workout.type] = (workoutTypes[workout.type] || 0) + 1;
+                });
+
+                const chartContainer = document.getElementById('workoutTypeChart');
+                chartContainer.innerHTML = '';
+
+                Object.entries(workoutTypes).forEach(([type, count]) => {
+                    const percentage = (count / this.workouts.length) * 100;
+                    const typeEmojis = {
+                        'Cardio': '🏃',
+                        'Strength': '💪',
+                        'Yoga': '🧘',
+                        'Swimming': '🏊',
+                        'Cycling': '🚴',
+                        'Other': '🏃'
+                    };
+
+                    chartContainer.innerHTML += `
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-lg">${typeEmojis[type] || '🏃'}</span>
+                                <span class="text-white">${type}</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 bg-gray-700 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full" style="width: ${percentage}%"></div>
+                                </div>
+                                <span class="text-gray-300 text-sm">${count}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            getWeeklyWorkouts() {
+                const now = new Date();
+                const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()));
+                startOfWeek.setHours(0, 0, 0, 0);
+                
+                return this.workouts.filter(workout => {
+                    const workoutDate = new Date(workout.date);
+                    return workoutDate >= startOfWeek;
+                });
+            }
+
+            getMonthlyWorkouts() {
+                const now = new Date();
+                const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+                
+                return this.workouts.filter(workout => {
+                    const workoutDate = new Date(workout.date);
+                    return workoutDate >= startOfMonth;
+                });
+            }
+
+            calculateStreak() {
+                if (this.workouts.length === 0) return 0;
+                
+                const sortedWorkouts = [...this.workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                let streak = 0;
+                let currentDate = new Date(today);
+                
+                for (let workout of sortedWorkouts) {
+                    const workoutDate = new Date(workout.date);
+                    workoutDate.setHours(0, 0, 0, 0);
+                    
+                    if (workoutDate.getTime() === currentDate.getTime()) {
+                        streak++;
+                        currentDate.setDate(currentDate.getDate() - 1);
+                    } else if (workoutDate.getTime() < currentDate.getTime()) {
+                        break;
+                    }
+                }
+                
+                return streak;
+            }
+
+            renderWorkouts() {
+                const container = document.getElementById('workoutHistory');
+                
+                if (this.workouts.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-12 text-gray-400">
+                            <div class="text-6xl mb-4">🏃‍♀️</div>
+                            <p class="text-lg">No workouts logged yet!</p>
+                            <p class="text-sm">Start your fitness journey by adding your first workout.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.workouts.slice(0, 10).map(workout => {
+                    const date = new Date(workout.date);
+                    const intensityColors = {
+                        'Low': 'bg-green-100 text-green-800',
+                        'Medium': 'bg-yellow-100 text-yellow-800',
+                        'High': 'bg-red-100 text-red-800'
+                    };
+
+                    const typeEmojis = {
+                        'Cardio': '🏃',
+                        'Strength': '💪',
+                        'Yoga': '🧘',
+                        'Swimming': '🏊',
+                        'Cycling': '🚴',
+                        'Other': '🏃'
+                    };
+
+                    return `
+                        <div class="workout-card rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-2xl">${typeEmojis[workout.type] || '🏃'}</span>
+                                    <div>
+                                        <h3 class="font-semibold text-white">${workout.type}</h3>
+                                        <p class="text-sm text-gray-400">${date.toLocaleDateString()} at ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                                    </div>
+                                </div>
+                                <button onclick="tracker.deleteWorkout(${workout.id})" class="text-red-400 hover:text-red-300 text-sm">
+                                    🗑️
+                                </button>
+                            </div>
+                            <div class="flex items-center space-x-4 mb-2">
+                                <span class="text-sm text-gray-300">⏱️ ${workout.duration} min</span>
+                                <span class="px-2 py-1 rounded-full text-xs font-medium ${intensityColors[workout.intensity]}">${workout.intensity}</span>
+                                ${workout.calories ? `<span class="text-sm text-gray-300">🔥 ${workout.calories} cal</span>` : ''}
+                            </div>
+                            ${workout.notes ? `<p class="text-sm text-gray-300 italic">"${workout.notes}"</p>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateChart() {
+                const weeklyData = [0, 0, 0, 0, 0, 0, 0]; // Mon-Sun
+                const weeklyWorkouts = this.getWeeklyWorkouts();
+                
+                weeklyWorkouts.forEach(workout => {
+                    const dayIndex = workout.dayOfWeek === 0 ? 6 : workout.dayOfWeek - 1; // Convert Sunday=0 to index 6
+                    weeklyData[dayIndex] += workout.duration;
+                });
+
+                const maxMinutes = Math.max(...weeklyData, 60); // Minimum scale of 60 minutes
+                const days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+                
+                days.forEach((day, index) => {
+                    const bar = document.getElementById(`${day}-bar`);
+                    const height = weeklyData[index] > 0 ? Math.max((weeklyData[index] / maxMinutes) * 100, 10) : 0;
+                    bar.style.height = `${height}%`;
+                });
+            }
+
+            renderCalendar() {
+                const year = this.currentDate.getFullYear();
+                const month = this.currentDate.getMonth();
+                
+                document.getElementById('currentMonth').textContent = 
+                    new Date(year, month).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const today = new Date();
+                
+                const calendarGrid = document.getElementById('calendarGrid');
+                calendarGrid.innerHTML = '';
+
+                // Empty cells for days before the first day of the month
+                for (let i = 0; i < firstDay; i++) {
+                    calendarGrid.innerHTML += '<div class="calendar-day p-2 text-center text-gray-500"></div>';
+                }
+
+                // Days of the month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const date = new Date(year, month, day);
+                    const dateString = date.toISOString().split('T')[0];
+                    
+                    const hasWorkout = this.workouts.some(workout => 
+                        new Date(workout.date).toDateString() === date.toDateString()
+                    );
+                    
+                    const hasPlanned = this.plannedWorkouts.some(planned => 
+                        planned.date === dateString && !planned.completed
+                    );
+                    
+                    const isToday = date.toDateString() === today.toDateString();
+                    
+                    let classes = 'calendar-day p-2 text-center text-white rounded';
+                    if (hasWorkout) classes += ' has-workout';
+                    else if (hasPlanned) classes += ' planned';
+                    if (isToday) classes += ' today';
+                    
+                    calendarGrid.innerHTML += `
+                        <div class="${classes}" onclick="selectDate('${dateString}')">
+                            ${day}
+                        </div>
+                    `;
+                }
+            }
+
+            renderUpcomingWorkouts() {
+                const container = document.getElementById('upcomingWorkouts');
+                const upcoming = this.plannedWorkouts
+                    .filter(workout => new Date(workout.date) >= new Date() && !workout.completed)
+                    .sort((a, b) => new Date(a.date) - new Date(b.date))
+                    .slice(0, 5);
+
+                if (upcoming.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-400">
+                            <div class="text-4xl mb-2">📅</div>
+                            <p class="text-sm">No planned workouts</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const typeEmojis = {
+                    'Cardio': '🏃',
+                    'Strength': '💪',
+                    'Yoga': '🧘',
+                    'Swimming': '🏊',
+                    'Cycling': '🚴',
+                    'Other': '🏃'
+                };
+
+                container.innerHTML = upcoming.map(workout => `
+                    <div class="bg-gray-800 rounded-lg p-3">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <span class="text-lg">${typeEmojis[workout.type] || '🏃'}</span>
+                            <span class="text-white font-medium">${workout.type}</span>
+                        </div>
+                        <div class="text-sm text-gray-300">
+                            <p>📅 ${new Date(workout.date).toLocaleDateString()}</p>
+                            <p>⏱️ ${workout.duration} min</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateGoalProgress() {
+                const container = document.getElementById('goalProgress');
+                const weeklyWorkouts = this.getWeeklyWorkouts().length;
+                const monthlyMinutes = this.getMonthlyWorkouts().reduce((sum, w) => sum + w.duration, 0);
+                const currentStreak = this.calculateStreak();
+
+                const goals = [
+                    {
+                        name: 'Weekly Workouts',
+                        current: weeklyWorkouts,
+                        target: this.goals.weekly,
+                        icon: '🏋️',
+                        unit: 'workouts'
+                    },
+                    {
+                        name: 'Monthly Minutes',
+                        current: monthlyMinutes,
+                        target: this.goals.monthlyMinutes,
+                        icon: '⏱️',
+                        unit: 'minutes'
+                    },
+                    {
+                        name: 'Streak Goal',
+                        current: currentStreak,
+                        target: this.goals.streak,
+                        icon: '🔥',
+                        unit: 'days'
+                    }
+                ];
+
+                container.innerHTML = goals.map(goal => {
+                    const percentage = Math.min((goal.current / goal.target) * 100, 100);
+                    const color = percentage >= 100 ? 'from-green-500 to-emerald-500' : 
+                                 percentage >= 75 ? 'from-yellow-500 to-orange-500' : 
+                                 'from-red-500 to-pink-500';
+
+                    return `
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-lg">${goal.icon}</span>
+                                    <span class="text-white font-medium">${goal.name}</span>
+                                </div>
+                                <span class="text-gray-300 text-sm">${goal.current}/${goal.target} ${goal.unit}</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-3">
+                                <div class="bg-gradient-to-r ${color} h-3 rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateAchievements() {
+                const container = document.getElementById('achievementsList');
+                
+                if (this.achievements.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-400 col-span-3">
+                            <div class="text-4xl mb-2">🏆</div>
+                            <p class="text-sm">No achievements yet</p>
+                            <p class="text-xs">Keep working out to unlock achievements!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.achievements.map(achievement => `
+                    <div class="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg p-4 text-center">
+                        <div class="text-3xl mb-2">${achievement.icon}</div>
+                        <div class="text-white font-bold text-sm">${achievement.name}</div>
+                        <div class="text-yellow-100 text-xs mt-1">
+                            ${new Date(achievement.unlockedAt).toLocaleDateString()}
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            updateDataOverview() {
+                const dataSize = JSON.stringify(this.workouts).length;
+                const firstWorkout = this.workouts.length > 0 ? 
+                    new Date(Math.min(...this.workouts.map(w => new Date(w.date)))).toLocaleDateString() : '-';
+                
+                const workoutTypes = {};
+                this.workouts.forEach(workout => {
+                    workoutTypes[workout.type] = (workoutTypes[workout.type] || 0) + 1;
+                });
+                const favoriteWorkout = Object.keys(workoutTypes).reduce((a, b) => 
+                    workoutTypes[a] > workoutTypes[b] ? a : b, '-');
+                
+                const longestSession = this.workouts.length > 0 ? 
+                    Math.max(...this.workouts.map(w => w.duration)) : 0;
+
+                document.getElementById('dataSize').textContent = `${Math.round(dataSize / 1024)} KB`;
+                document.getElementById('firstWorkout').textContent = firstWorkout;
+                document.getElementById('favoriteWorkout').textContent = favoriteWorkout;
+                document.getElementById('longestSession').textContent = `${longestSession} min`;
+            }
+
+            changeMonth(direction) {
+                this.currentDate.setMonth(this.currentDate.getMonth() + direction);
+                this.renderCalendar();
+            }
+        }
+
+        // Initialize the fitness tracker
+        const tracker = new FitnessTrackerPro();
+
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+                button.classList.add('text-gray-300');
+            });
+            
+            // Show selected tab content
+            document.getElementById(`${tabName}-content`).classList.remove('hidden');
+            
+            // Add active class to selected tab button
+            const activeButton = document.getElementById(`tab-${tabName}`);
+            activeButton.classList.add('active');
+            activeButton.classList.remove('text-gray-300');
+            
+            tracker.currentTab = tabName;
+            
+            // Update content based on tab
+            if (tabName === 'analytics') {
+                tracker.updateAnalytics();
+            } else if (tabName === 'planner') {
+                tracker.renderCalendar();
+                tracker.renderUpcomingWorkouts();
+            } else if (tabName === 'goals') {
+                tracker.updateGoalProgress();
+                tracker.updateAchievements();
+            } else if (tabName === 'data') {
+                tracker.updateDataOverview();
+            }
+        }
+
+        // Calendar functionality
+        function selectDate(dateString) {
+            document.getElementById('planDate').value = dateString;
+            showTab('planner');
+        }
+
+        function changeMonth(direction) {
+            tracker.changeMonth(direction);
+        }
+
+        // Export/Import functionality
+        function exportData(format) {
+            const data = {
+                workouts: tracker.workouts,
+                plannedWorkouts: tracker.plannedWorkouts,
+                goals: tracker.goals,
+                achievements: tracker.achievements,
+                exportDate: new Date().toISOString()
+            };
+
+            let content, filename, mimeType;
+
+            if (format === 'json') {
+                content = JSON.stringify(data, null, 2);
+                filename = `fittracker-backup-${new Date().toISOString().split('T')[0]}.json`;
+                mimeType = 'application/json';
+            } else if (format === 'csv') {
+                const csvHeaders = 'Date,Type,Duration,Intensity,Calories,Notes\n';
+                const csvContent = tracker.workouts.map(workout => 
+                    `${new Date(workout.date).toLocaleDateString()},${workout.type},${workout.duration},${workout.intensity},${workout.calories || 0},"${workout.notes || ''}"`
+                ).join('\n');
+                content = csvHeaders + csvContent;
+                filename = `fittracker-workouts-${new Date().toISOString().split('T')[0]}.csv`;
+                mimeType = 'text/csv';
+            }
+
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function importData() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file to import');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let importedData;
+                    
+                    if (file.name.endsWith('.json')) {
+                        importedData = JSON.parse(e.target.result);
+                        
+                        if (importedData.workouts) {
+                            tracker.workouts = [...tracker.workouts, ...importedData.workouts];
+                        }
+                        if (importedData.plannedWorkouts) {
+                            tracker.plannedWorkouts = [...tracker.plannedWorkouts, ...importedData.plannedWorkouts];
+                        }
+                        if (importedData.goals) {
+                            tracker.goals = { ...tracker.goals, ...importedData.goals };
+                        }
+                        if (importedData.achievements) {
+                            tracker.achievements = [...tracker.achievements, ...importedData.achievements];
+                        }
+                    } else if (file.name.endsWith('.csv')) {
+                        const lines = e.target.result.split('\n');
+                        const headers = lines[0].split(',');
+                        
+                        for (let i = 1; i < lines.length; i++) {
+                            if (lines[i].trim()) {
+                                const values = lines[i].split(',');
+                                const workout = {
+                                    id: Date.now() + i,
+                                    date: new Date(values[0]).toISOString(),
+                                    type: values[1],
+                                    duration: parseInt(values[2]),
+                                    intensity: values[3],
+                                    calories: parseInt(values[4]) || 0,
+                                    notes: values[5] ? values[5].replace(/"/g, '') : '',
+                                    dayOfWeek: new Date(values[0]).getDay()
+                                };
+                                tracker.workouts.push(workout);
+                            }
+                        }
+                    }
+                    
+                    tracker.saveWorkouts();
+                    tracker.savePlannedWorkouts();
+                    localStorage.setItem('goals', JSON.stringify(tracker.goals));
+                    localStorage.setItem('achievements', JSON.stringify(tracker.achievements));
+                    
+                    tracker.updateStats();
+                    tracker.renderWorkouts();
+                    tracker.updateChart();
+                    tracker.renderCalendar();
+                    tracker.updateGoalProgress();
+                    tracker.updateAchievements();
+                    tracker.updateDataOverview();
+                    
+                    alert('Data imported successfully!');
+                    fileInput.value = '';
+                } catch (error) {
+                    alert('Error importing data. Please check the file format.');
+                    console.error('Import error:', error);
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        // Motivational Quotes Array
+        const motivationalQuotes = [
+            { quote: "The only bad workout is the one that didn't happen.", author: "Unknown" },
+            { quote: "Success isn't given. It's earned in the gym.", author: "Unknown" },
+            { quote: "Your body can do it. It's your mind you need to convince.", author: "Unknown" },
+            { quote: "The groundwork for all happiness is good health.", author: "Leigh Hunt" },
+            { quote: "Take care of your body. It's the only place you have to live.", author: "Jim Rohn" },
+            { quote: "Fitness is not about being better than someone else. It's about being better than you used to be.", author: "Khloe Kardashian" },
+            { quote: "The first wealth is health.", author: "Ralph Waldo Emerson" },
+            { quote: "Exercise is a celebration of what your body can do, not a punishment for what you ate.", author: "Unknown" },
+            { quote: "A healthy outside starts from the inside.", author: "Robert Urich" },
+            { quote: "You don't have to be extreme, just consistent.", author: "Unknown" },
+            { quote: "Progress, not perfection.", author: "Unknown" },
+            { quote: "Strong is the new skinny.", author: "Unknown" },
+            { quote: "Sweat is fat crying.", author: "Unknown" },
+            { quote: "Don't wish for it, work for it.", author: "Unknown" },
+            { quote: "The pain you feel today will be the strength you feel tomorrow.", author: "Unknown" },
+            { quote: "Champions train, losers complain.", author: "Unknown" },
+            { quote: "Make yourself proud.", author: "Unknown" },
+            { quote: "Every workout is progress.", author: "Unknown" },
+            { quote: "Believe in yourself and all that you are.", author: "Christian D. Larson" },
+            { quote: "Your only limit is your mind.", author: "Unknown" }
+        ];
+
+        let currentQuoteIndex = 0;
+
+        // Function to change motivational quote
+        function changeQuote() {
+            currentQuoteIndex = (currentQuoteIndex + 1) % motivationalQuotes.length;
+            const quote = motivationalQuotes[currentQuoteIndex];
+            
+            const quoteElement = document.getElementById('motivationalQuote');
+            const authorElement = document.getElementById('quoteAuthor');
+            
+            // Add fade effect with smooth transition
+            quoteElement.style.transition = 'opacity 0.3s ease-in-out';
+            authorElement.style.transition = 'opacity 0.3s ease-in-out';
+            quoteElement.style.opacity = '0';
+            authorElement.style.opacity = '0';
+            
+            setTimeout(() => {
+                quoteElement.textContent = `"${quote.quote}"`;
+                authorElement.textContent = `- ${quote.author}`;
+                quoteElement.style.opacity = '1';
+                authorElement.style.opacity = '1';
+            }, 300);
+        }
+
+        // Auto-change quote every 30 seconds
+        setInterval(changeQuote, 30000);
+
+        // BMI Calculator Function
+        function calculateBMI() {
+            const height = parseFloat(document.getElementById('height').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const resultDiv = document.getElementById('bmiResult');
+            
+            if (!height || !weight || height <= 0 || weight <= 0) {
+                resultDiv.innerHTML = '<p class="text-red-400">Please enter valid height and weight!</p>';
+                resultDiv.classList.remove('hidden');
+                return;
+            }
+            
+            const heightInMeters = height / 100;
+            const bmi = weight / (heightInMeters * heightInMeters);
+            let category = '';
+            let color = '';
+            
+            if (bmi < 18.5) {
+                category = 'Underweight';
+                color = 'text-blue-400';
+            } else if (bmi < 25) {
+                category = 'Normal weight';
+                color = 'text-green-400';
+            } else if (bmi < 30) {
+                category = 'Overweight';
+                color = 'text-yellow-400';
+            } else {
+                category = 'Obese';
+                color = 'text-red-400';
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="result-highlight p-3 rounded-lg">
+                    <p class="text-white font-bold">BMI: ${bmi.toFixed(1)}</p>
+                    <p class="${color}">${category}</p>
+                </div>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+
+        // BMR Calculator Function
+        function calculateBMR() {
+            const height = parseFloat(document.getElementById('bmrHeight').value);
+            const weight = parseFloat(document.getElementById('bmrWeight').value);
+            const age = parseFloat(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const resultDiv = document.getElementById('bmrResult');
+            
+            if (!height || !weight || !age || !gender || height <= 0 || weight <= 0 || age <= 0) {
+                resultDiv.innerHTML = '<p class="text-red-400">Please fill in all fields with valid values!</p>';
+                resultDiv.classList.remove('hidden');
+                return;
+            }
+            
+            let bmr;
+            if (gender === 'male') {
+                bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+            } else {
+                bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+            }
+            
+            const sedentary = bmr * 1.2;
+            const lightlyActive = bmr * 1.375;
+            const moderatelyActive = bmr * 1.55;
+            const veryActive = bmr * 1.725;
+            
+            resultDiv.innerHTML = `
+                <div class="result-highlight p-3 rounded-lg space-y-2">
+                    <p class="text-white font-bold">BMR: ${Math.round(bmr)} calories/day</p>
+                    <div class="text-xs space-y-1">
+                        <p class="text-gray-300">Daily Calorie Needs:</p>
+                        <p class="text-cyan-300">Sedentary: ${Math.round(sedentary)}</p>
+                        <p class="text-green-300">Light Activity: ${Math.round(lightlyActive)}</p>
+                        <p class="text-yellow-300">Moderate: ${Math.round(moderatelyActive)}</p>
+                        <p class="text-red-300">Very Active: ${Math.round(veryActive)}</p>
+                    </div>
+                </div>
+            `;
+            resultDiv.classList.remove('hidden');
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9854b8b9652754fb',t:'MTc1ODkxMDI2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
